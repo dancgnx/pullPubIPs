@@ -17,7 +17,7 @@ jd=cgx.interactive.jd
 jd_detailed=cloudgenix.jd_detailed
 
 #print header
-print("{site},{element},{ipaddress},{nat},{itype}".format(site="Site Name",element="Device Name",ipaddress="IP address",nat="NAT IP address",itype="Type of address"))
+print("{site},{element},{interfacename},{ipaddress},{nat},{itype}".format(interfacename="Interface Name",site="Site Name",element="Device Name",ipaddress="IP address",nat="NAT IP address",itype="Type of address"))
 # get sites table
 res = cgx.get.sites()
 if not res:
@@ -67,6 +67,12 @@ for element in cgx.get.elements().cgx_content["items"]:
                 if interface_type == "dynamic":
                     # get interface status
                     interface_status = cgx.get.interfaces_status(site_id,element_id,interface["id"]).cgx_content
+                    # if the interface is a bypass pair, we need to look at one which is not a bypass
+                    if "items" in interface_status:
+                        if "bypass" in interface_status["items"][0]["name"]:
+                            interface_status = interface_status["items"][1]
+                        else:
+                            interface_status = interface_status["items"][0]
                     if interface_status["operational_state"] == "down":
                         interface_ip = "NA"
                     else:
@@ -81,6 +87,6 @@ for element in cgx.get.elements().cgx_content["items"]:
                     NAT = interface["nat_address"]
                 else:
                     NAT= "NA"
-                print("{site},{element},{ipaddress},{nat},{itype}".format(site=element_siteName,element=element_name,ipaddress=interface_ip,nat=NAT,itype=interface_type))
+                print("{site},{element},{interfacename},{ipaddress},{nat},{itype}".format(interfacename=interface["name"],site=element_siteName,element=element_name,ipaddress=interface_ip,nat=NAT,itype=interface_type))
 
 
