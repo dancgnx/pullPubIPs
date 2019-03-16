@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Import CloudGenix SDK
+import cgxinit
 import cloudgenix
 import sys
 import os
@@ -7,14 +8,10 @@ import json
 
 
 # create CGX SDK opbject
-cgx = cloudgenix.API(ssl_verify=False)
+cgx = cgxinit.go()
 
-token = os.environ.get("X_AUTH_TOKEN")
-if not token:
-    print ("Error - X_AUTH_TOKEN var isn't found")
 # authenticate to CGX
 
-cgx.interactive.use_token(token)
 
 jd=cgx.interactive.jd
 jd_detailed=cloudgenix.jd_detailed
